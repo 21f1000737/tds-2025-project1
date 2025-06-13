@@ -1,16 +1,6 @@
-import datetime
-import json
-import base64
-import requests
-from bs4 import BeautifulSoup
-from dateutil.parser import parse as parse_dt
-from google import genai
-from google.genai import types
-import google.generativeai as genai2
 import os
 from openai import OpenAI
 import time
-from pathlib import Path
 import numpy as np
 
 
