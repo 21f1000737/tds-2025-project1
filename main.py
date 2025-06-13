@@ -10,6 +10,10 @@ from pydantic import BaseModel
 import uvicorn
 from embeddings import load_embeddings, get_openai_embedding, client as _shared_client # type: ignore[import]
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
+
 # ---------------------------------------------------------------------------
 # Utility helpers
 # ---------------------------------------------------------------------------
@@ -109,6 +113,13 @@ def answer_question(
 
 app = FastAPI(title="TDS Virtual TA API", docs_url="/docs", redoc_url="/redoc")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or specify domains
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],
+)
 class QARequest(BaseModel):
     question: str
     image: Optional[str] = None  # base64‑encoded image string
@@ -120,6 +131,7 @@ class QAResponse(BaseModel):
 @app.post("/api/ta", response_model=QAResponse)
 async def qa_endpoint(payload: QARequest):
     start = time.time()
+    
     try:
         result = answer_question(payload.question, image_b64=payload.image)
         duration = time.time() - start
